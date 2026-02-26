@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { marked } from 'marked'
 import MarkdownEditor from './MarkdownEditor'
 import './App.css'
 
@@ -15,6 +16,12 @@ function App() {
   const [body, setBody] = useState('')
   const [editingId, setEditingId] = useState(null)
   const [search, setSearch] = useState('')
+  const [previewing, setPreviewing] = useState(false)
+
+  const previewHtml = useMemo(() => {
+    if (!previewing) return ''
+    return marked.parse(body || '', { breaks: true })
+  }, [previewing, body])
 
   useEffect(() => {
     localStorage.setItem('notes', JSON.stringify(notes))
@@ -99,12 +106,25 @@ function App() {
             onChange={(e) => setTitle(e.target.value)}
             className="input-title"
           />
-          <MarkdownEditor
-            value={body}
-            onChange={setBody}
-            placeholder="Write your markdown here..."
-          />
+          {previewing ? (
+            <div
+              className="preview-pane"
+              dangerouslySetInnerHTML={{ __html: previewHtml }}
+            />
+          ) : (
+            <MarkdownEditor
+              value={body}
+              onChange={setBody}
+              placeholder="Write your markdown here..."
+            />
+          )}
           <div className="editor-actions">
+            <button
+              className="btn-preview"
+              onClick={() => setPreviewing(!previewing)}
+            >
+              {previewing ? 'Edit' : 'Preview'}
+            </button>
             <button className="btn-primary" onClick={saveNote}>
               {editingId ? 'Update' : 'Add Note'}
             </button>
