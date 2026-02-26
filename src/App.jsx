@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import MarkdownEditor from './MarkdownEditor'
 import './App.css'
 
 function generateId() {
@@ -98,12 +99,10 @@ function App() {
             onChange={(e) => setTitle(e.target.value)}
             className="input-title"
           />
-          <textarea
-            placeholder="Write your note here..."
+          <MarkdownEditor
             value={body}
-            onChange={(e) => setBody(e.target.value)}
-            className="input-body"
-            rows={6}
+            onChange={setBody}
+            placeholder="Write your markdown here..."
           />
           <div className="editor-actions">
             <button className="btn-primary" onClick={saveNote}>
